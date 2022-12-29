@@ -1,5 +1,5 @@
 {
-  "name": "mautic/theme-landing",
+  "name": "theme-landing",
   "description": "Mautic landing Theme",
   "type": "mautic-theme",
   "keywords": ["mautic","theme"],
