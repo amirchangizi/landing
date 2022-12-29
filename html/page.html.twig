@@ -1,0 +1,1162 @@
+{% extends ":"~template~":base.html.twig" %}
+{% block content %}
+  <div id="app">
+    <div class="frame inner-frame">
+      <!--    هدر    -->
+      <header id="header" class="mb-30" style="position: relative;
+    overflow: hidden;">
+        <picture>
+          <img src="assets/images/landing-header-min.png" alt="" style="width:auto;max-width: 100%">
+        </picture>
+      </header>
+
+      <!--    دکمه    -->
+      <!--        <section class="mb-30">-->
+      <!--            <button type="submit" class="btn-landing btn-header scroll-to" id="" >ثبت نام رژیم</button>-->
+      <!--        </section>-->
+
+
+      <section class="container mb-20" v-if="userInfo.utm_campaign=='null' || userInfo.utm_campaign=='null1'">
+
+        <div class="countdown-container">
+          <h3 class="h5 text-dark">این فرصت هیچ وقت تکرار نمی‌شه!</h3>
+          <div class="timer-container">
+            <h1 class="alt-1">{{getLocalDateTime}}T23:59:59+0000</h1>
+          </div>
+          <p class="h6 text-dark" style="margin-top: 30px;">مانده تا پایان تخفیف</p>
+        </div>
+
+      </section>
+
+
+      <!--            دکمه    -->
+      <section class="mb-30" v-if="false">
+        <button type="submit" class="btn-landing btn-header scroll-to" id="" >ثبت نام رژیم</button>
+      </section>
+
+
+      <!--    متن ویدئو    -->
+      <section class="container mb-30">
+        <header class="header-title">
+          <h2>عید، لباس تن مانکن رو بپوش!</h2>
+        </header>
+        <p class="text-justify mb-2" style="color: #000">اگه می‌خوای عید، لباس‌ تن مانکن‌ رو بپوشی و تو مهمونی‌ها همه از لاغر شدنت سوپرایز شن، الان وقتشه! فقط 3 ماه تا عید مونده، تو این فرصت می‌تونی با موفق‌ترین روش لاغری برنافیت رژیم بگیری و <span class="color-red text-bold">12 کیلو</span> وزن کم کنی و <span class="color-red text-bold">4 سایز</span> لاغر شی.</p>
+        <p class="text-justify" style="color: #000">می‌تونی عید جذاب‌ترین اندام رو داشته باشی و قشنگ‌ترین لباس‌ها رو بپوشی، انتخاب با خودته!<p>
+      </section>
+
+      <!--    ویدئو    -->
+      <section class="container mb-30">
+        <div class="video-container video-container-pro" style="margin: 0 auto 25px;">
+          <div class="video_holder">
+                <span class="has-icon">
+                    <video poster="assets/images/cover1.jpg" ref="video-1" preload="none">
+                        <source src="assets/video/marathon-intro.mp4" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
+                     <i id="ic-play1" class="ic-play video-record" @click="play(1)"></i>
+                    <small>
+                        <strong>پخش ویدئو</strong>
+                     </small>
+                </span>
+          </div>
+          <div class="panel">
+                <span>
+                 <strong>لاغری گروهی، جدیدترین رژیم دکتر کرمانی</strong>
+                </span>
+          </div>
+        </div>
+      </section>
+
+      <!--    محاسبه bmi    -->
+      <section class="container mb-30 bmi-register btn-hide" id="register">
+
+
+        <div class="register-wrapper panel">
+          <div class="register">
+            <img src="assets/images/bmi-header-icon.png" class="register-header" alt="yalda">
+            <div v-if="step==1">
+              <h4 class="title my-0" v-if="childStep==1">برای ثبت نام و دریافت رژیم</h4>
+              <strong class="my-2 mb-3" style="display: block" v-if="childStep==1">مشخصاتت رو وارد کن</strong>
+              <h4 class="title px-4" v-if="childStep==2 && step !=2">گزارش میزان اضافه وزن شما</h4>
+            </div>
+            <span v-if="step==2 || step==3" class="section-btn" title="محاسبه مجدد">
+                         <button @click="backButtonRegister" v-if="childStep !=1">
+                            <i class="ic-arrow-right"></i>
+                         </button>
+                    </span>
+            <div v-if="step==2">
+              <h4 class="title my-0">برای ثبت نام و دریافت رژیم</h4>
+              <strong class="my-2 mb-3" style="display: block">مشخصاتت رو وارد کن</strong>
+            </div>
+
+            <div v-if="step==3">
+              <h4 class="title my-0">ثبت نام و دریافت رژیم</h4>
+            </div>
+
+            <span v-if="step==1 && childStep==2" class="section-btn" title="محاسبه مجدد">
+                        <button @click="reloadBmi">
+                            <i class="ic-arrow-right"></i>
+                        </button>
+                    </span>
+
+            <!--                    <div v-if="step==3">-->
+            <!--                        <h4 class="title" style="margin-bottom: 0">با بروزترین متد لاغری</h4>-->
+            <!--                        <strong style="margin: 0 0 15px 15px;display: block">در {{result.months}} به وزن دلخواهت می‌رسی</strong>-->
+            <!--                    </div>-->
+
+            <div class="item-header">
+                    <span v-for="n in 3"
+                          :class="{active: n == step,elapsed:n< step}"
+                    >{{ n }}</span>
+            </div>
+          </div>
+
+          <transition name="fade" mode="out-in" tag="div">
+
+
+            <!-- STEP 1 -->
+            <div class="inner" v-if="step==1" :key="step">
+              <transition name="fade" mode="out-in" tag="div">
+                <div class="inner" v-if="step==1" :key="step">
+                  <transition name="fade" mode="out-in" tag="div">
+                    <div class="inner" v-if="childStep==1" :key="childStep">
+                      <form @submit.prevent="calculate">
+                        <div class="input-group">
+                          <!--                                <span class="label">جنسیت:</span>-->
+                          <div id="container-toggle">
+                            <div class="inner-container-toggle">
+                              <div class="toggle">
+                                <input type="radio" id="inp1" name="gender" value="female" v-model="form.gender">
+                                <label for="inp1" >خانم هستم</label>
+                                <!--                                            <span class="icon-gender"></span>-->
+                              </div>
+                              <div class="toggle">
+                                <input type="radio" id="inp2" name="gender" value="male" v-model="form.gender">
+                                <label for="inp2" >آقا هستم</label>
+                                <!--                                            <span class="icon-gender"></span>-->
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <c-input
+                                v-model.number="form.weight"
+                                label="وزن (کیلوگرم)"
+                                type="tel"
+                                numeric
+                                required
+                                tips="20 تا 200"
+                                max="10"
+                                @validate="validateInput('weight')"
+                        ></c-input>
+                        <p v-if="formInputList.weight.hasError" class="small" style="color: red !important;">
+                          وزن باید بین 20 تا 200 کیلو باشد
+                        </p>
+                        <c-input
+                                v-model.number="form.height"
+                                label="قد (سانتی متر)"
+                                type="tel"
+                                numeric
+                                required
+                                tips="100 تا 230"
+                                @validate="validateInput('height')"
+                        ></c-input>
+                        <p v-if="formInputList.height.hasError" class="small" style="color: red !important;">
+                          قد باید بین 100 تا 230 باشد
+                        </p>
+                        <c-input
+                                v-model.number="form.age"
+                                label="سن (سال)"
+                                type="tel"
+                                numeric
+                                required
+                                tips="12 تا 70"
+                                @validate="validateInput('age')"
+                        ></c-input>
+                        <p v-if="formInputList.age.hasError" class="small" style="color: red !important;">
+                          سن باید بین 12 تا 70 باشد
+                        </p>
+                        <!--                        <c-input-->
+                        <!--                                v-model.number="form.wrist"-->
+                        <!--                                label="دور مچ دست (سانتی متر)"-->
+                        <!--                                type="tel"-->
+                        <!--                                numeric-->
+                        <!--                                required-->
+                        <!--                                tips="5 تا 30"-->
+                        <!--                                @validate="validateInput('wrist')"-->
+                        <!--                        ></c-input>-->
+                        <!--                        <p v-if="formInputList.wrist.hasError" class="small" style="color: red !important;">-->
+                        <!--                            دور مچ دست باید بین 5 تا 30 باشد-->
+                        <!--                        </p>-->
+                        <button type="submit" class="btn-landing landing-getbmi" id="tor-info" :disabled="!validRegForm">تایید و مرحله
+                          بعد
+                          <i class="ic-arrow-right"></i>
+                        </button>
+                      </form>
+                    </div>
+                    <div class="inner" v-if="childStep==2" :key="childStep">
+                      <div id="step2bmi-result">
+                        <div class="report_bmi">
+                          <div class="box">
+                            <div class="step2bmi-result-item">
+                              <div class="content">
+                                <p>میزان {{result.dietType}}</p>
+                                <div class="result-container">
+                                  <span class="text-danger font-weight-bold h4">{{result.weight}}</span>
+                                  <span class="result-unit">کیلوگرم</span>
+                                </div>
+                              </div>
+                              <div class="icon-content">
+                                <img style="transform: scaleX(-1);" src="assets/images/obesity.png" alt="">
+                              </div>
+                            </div>
+                            <div class="step2bmi-result-item">
+                              <div class="content">
+                                <p>وزن ایده‌آل</p>
+                                <div class="result-container">
+                                  <span class="text-danger font-weight-bold h4">{{result.normalWeight}}</span>
+                                  <span class="result-unit">کیلوگرم</span>
+                                </div>
+                              </div>
+                              <div class="icon-content">
+                                <img style="transform: scaleX(-1);" src="assets/images/weight-scale.png" alt="">
+                              </div>
+                            </div>
+                            <div class="step2bmi-result-item">
+                              <div class="content">
+                                <p>زمان رسیدن به وزن ایده‌آل</p>
+                                <div class="result-container">
+                                  <span class="text-danger font-weight-bold h4">{{result.months}}</span>
+                                  <span class="result-unit" v-if="result.months != '-'">ماه</span>
+                                </div>
+                              </div>
+                              <div class="icon-content">
+                                <img style="transform: scaleX(-1);" src="assets/images/clock.png" alt="">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="chart">
+                            <div class="chart_svg">
+                              <img :src="result.chart.img" alt="">
+                              <img :src="result.chart.holder" alt="">
+                            </div>
+                            <h3>{{result.chart.title}}</h3>
+                          </div>
+                        </div>
+
+                        <div class="main_list mt-20 mb-20">
+                          <ul class="sans">
+                            <li class="mb-4">تا کنون <span class="mark">254 هزار نفر</span> از هم‌سن و سال‌های تو با رژیم برنافیت بدون بازگشت وزن به تناسب اندام رسیدن.</li>
+                            <li>بیش از <span class="mark">90 درصد</span> از کسایی که با برنافیت رژیم گرفتن، از رژیم‌شون رضایت کامل داشتن.</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <button @click="step=2; childStep = 1" class="btn-landing landing-getreport">ثبت‌نام رژیم<span v-if="loading" class="spinner-border text-light spinner-border-sm" role="status" aria-hidden="true" style="display: inline-block;margin-right: 5px;"></span>
+                        <i v-else class="ic-arrow-right"></i>
+                      </button>
+                    </div>
+                  </transition>
+                </div>
+              </transition>
+            </div>
+
+            <div class="inner" v-if="step==2" :key="step">
+              <transition name="fade" mode="out-in" tag="div">
+                <div class="inner" v-if="childStep==1" :key="childStep">
+                  <form @submit.prevent="register(2,'bmi')">
+                    <c-input label="نام" v-model="form.name" type="text" required class="person"></c-input>
+                    <p v-if="invalidName" class="small" style="color: red !important;"> لطفا نام خودرا به درستی وارد کنید </p>
+                    <c-input label="نام خانوادگی" v-model="form.family" type="text" required class="person"></c-input>
+                    <p v-if="invalidFamily" class="small" style="color: red !important;"> لطفا نام خانوادگی خودرا به درستی وارد کنید </p>
+                    <div class="tel-input-container mb-10" v-if="submitStatus == 'none'">
+                      <select class="input_country_tel" v-model="countryListSelectId">
+                        <option v-for="(item, index) in countryListCodeData" :key="index" :value="item.code" v-if="item.continent !== 'Africa'" :title="item.code.toLowerCase()">
+                          {{item.code + " (+"+item.mobileCode+")"}}
+                        </option>
+                      </select>
+                      <c-input v-model="form.phone" ref="tel-2" label="موبایل" type="tel" numeric required :max=validationPhoneCharacter style="width: 83%;margin: 0"></c-input>
+                    </div>
+                    <!--                                <p v-if="response.msg" v-html="response.msg" class="text-success">{{ response.msg }}</p>-->
+                    <p v-if="validationPhone" class="small" style="color: #000 !important; z-index: 1">لطفا شماره موبایل را بصورت صحیح وارد کنید</p>
+                    <button @click="" type="submit" class="btn-landing btn-register-user mt-auto landing-register" :disabled="(invalidName || invalidFamily || loading)" id="tor-register">مرحله بعد<span v-if="loading" class="spinner-border text-light spinner-border-sm" role="status" aria-hidden="true" style="display: inline-block;margin-right: 5px;"></span>
+                      <i v-else class="ic-arrow-right"></i>
+                    </button>
+                  </form>
+                </div>
+                <div class="inner" v-if="childStep==2" :key="childStep">
+                  <form @submit.prevent="verify">
+                    <strong>کد فعالسازی به شماره موبایل زیر ارسال شد</strong>
+                    <strong class="color-red mb-15">{{form.phone}}</strong>
+                    <c-count :time="prettyTime" style="width: 70%;margin: 0 auto;" label="کد فعالسازی را وارد کنید" v-model="form.verify" type="num" required class="person" max="4"></c-count>
+                    <c-input v-if="false" style="width: 70%;margin: auto;" label="کد فعالسازی را وارد کنید" v-model="form.verify" type="num" required class="person" max="4"></c-input>
+                    <p v-if="form.isVerify" class="small mb-0 mt-15" style="color: red !important;">کد فعال سازی اشتباه است</p>
+                    <!--                                    <div v-if="!form.registerCode">-->
+                    <!--                                        <timer :time="prettyTime" class="mt-10"></timer>-->
+                    <!--                                    </div>-->
+                    <p class="mb-0 mt-3">درصورت عدم دریافت پیامک کد فعالسازی بعد از<br> پایان زمان انتظار دکمه زیر را لمس کنید</p>
+                    <p :class="form.registerCode ? 'registerWCode mt-10' : 'deactive mt-10'" @click="verifyWCode"><u>کد فعالسازی دریافت نکردم</u></p>
+                    <button @click="" type="submit" class="btn-landing btn-register-user mt-2 landing-register mt-auto" :disabled="(invalidName && invalidFamily)" id="tor-register">مرحله بعد<span v-if="loading" class="spinner-border text-light spinner-border-sm" role="status" aria-hidden="true" style="display: inline-block;margin-right: 5px;"></span>
+                      <i v-else class="ic-arrow-right"></i>
+                    </button>
+                  </form>
+                </div>
+              </transition>
+
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="inner" v-if="step==3" :key="step">
+              <transition name="fade" mode="out-in" tag="div">
+                <div class="inner" v-if="childStep==1" :key="childStep">
+                  <header class="header-title">
+                    <h2>انتخاب نوع رژیم</h2>
+                  </header>
+                  <div class="pay-help-bmi">
+                    <p class="color-black text-right mb-0 sans">با دریافت رژیم برنافیت، عضو ماراتن لاغری گروهی می‌شی و از هم‌گروهیات انگیزه می‌گیری. با توجه به شرایط جسمانیت، برنافیت رژیم‌های زیر رو بهت پیشنهاد می‌ده:</p>
+                    <p class="color-black text-right mb-2 sans"></p>
+                    <p class="color-black text-right mb-0 bold-text sans">یکی از رژیم‌های زیر رو انتخاب کن:</p>
+                  </div>
+                  <section id="product-box" class="mb-20">
+                    <div v-for="package in packages.products" :key="package.id" v-if="package.status === true">
+                      <input type="radio" :id="'control_0'+package.id" name="select" v-model="form.packageSelectId" :value="package.id">
+                      <label :for="'control_0'+package.id">
+                        <div class="title-box">
+                          <h2 class="h6">{{package.title}}</h2>
+                          <p class="mb-0 h6 font-weight-normal" v-for="description in package.description">{{description}}</p>
+                        </div>
+                        <div class="amount-box">
+                          <div class="amount-content" v-if="package.price.offer">
+                            <p>{{package.price.amount}}</p>
+                            <p>
+                              <span>{{Math.round(((package.price.amount - (package.price.amount - package.price.offer))/package.price.amount)*100)}}</span>
+                              <span>%</span>
+                            </p>
+                          </div>
+                          <div class="amount-off">
+                            <p>{{(package.price.amount - package.price.offer) === 0 ? "رایگان" : (package.price.amount - package.price.offer)}}</p>
+                            <p>هزارتومان</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                    <p class="error mt-1 mb-0 sans" v-if="!form.packageSelectId">لطفا محصول مورد نظر خودرا انتخاب کنید</p>
+                  </section>
+                  <div class="button_product_sticky">
+                    <div class="amount">
+                      <p class="bold-text">مجموع:</p>
+                      <p style="color: #002c00;" class="bold-text">{{this.returnSumPrice.selectedPackageItemSum}} <span class="h6">تومان</span></p>
+                    </div>
+                    <button type="submit" @click="errorHandle(1)" class="btn-landing landing-selectdiet m-0" id="btn-register-pay">
+                      {{this.form.payment_method === 'card-payment' ? 'ارسال مشخصات' : 'خرید و دریافت رژیم'}}
+                      <span v-if="loading" class="spinner-border text-light spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <i v-else class="ic-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="inner" v-if="childStep==2" :key="childStep">
+                  <header class="header-title">
+                    <h2>انتخاب نوع پشتیبانی</h2>
+                  </header>
+                  <div class="pay-help-bmi">
+                    <p class="color-black text-right mb-2 sans">کسایی که از برنافیت رژیم گرفتن، پشتیبان رو به عنوان مهم‌ترین عامل موفقیت‌شون معرفی می‌کنن. پشتیبان در طول رژیم همراهته، به همه سوالات پاسخ میده و نمی‌ذاره انگیزه‌ت کم شه.</p>
+                    <p class="color-black text-right mb-0 bold-text sans">یکی از روش‌های پشتیبانی زیر رو انتخاب کن:</p>
+                  </div>
+                  <section id="product-box" class="mb-20">
+                    <div v-for="package in selectedPackageItem.option.support" :key="package.id">
+                      <input type="radio" :id="'control_0'+package.id" name="select" v-model="packagesSupportSelectId" :value="package.id">
+                      <label :for="'control_0'+package.id">
+                        <div class="title-box">
+                          <h2 class="h6">{{package.title}}</h2>
+                          <p class="mb-0 h6 font-weight-normal" v-for="description in package.description">{{description}}</p>
+                        </div>
+                        <div class="amount-box">
+                          <div class="amount-content" v-if="package.price.offer">
+                            <p>{{package.price.amount}}</p>
+                            <p>
+                              <span>{{Math.round(((package.price.amount - (package.price.amount - package.price.offer))/package.price.amount)*100)}}</span>
+                              <span>%</span>
+                            </p>
+                          </div>
+                          <div class="amount-off">
+                            <p>{{(package.price.amount - package.price.offer) === 0 ? "رایگان" : (package.price.amount - package.price.offer)}}</p>
+                            <p>هزارتومان</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                    <p class="error mt-1 mb-0" v-if="!form.packageSelectId">لطفا محصول مورد نظر خودرا انتخاب کنید</p>
+                  </section>
+                  <div class="button_product_sticky">
+                    <div class="amount">
+                      <p class="bold-text">مجموع:</p>
+                      <p style="color: #002c00;" class="bold-text">{{this.returnSumPrice.selectedPackageItemSum}} <span class="h6">تومان</span></p>
+                    </div>
+                    <button type="submit" @click="errorHandle(2)" class="btn-landing landing-selectsupport m-0" id="btn-register-pay">
+                      {{this.form.payment_method === 'card-payment' ? 'ارسال مشخصات' : 'خرید و دریافت رژیم'}}
+                      <span v-if="loading" class="spinner-border text-light spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <i v-else class="ic-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="inner" v-if="childStep==3" :key="childStep">
+                  <header class="header-title">
+                    <h2>انتخاب برنامه ورزشی</h2>
+                  </header>
+                  <div class="pay-help-bmi">
+                    <p class="color-black text-right mb-2 sans">اگه می‌خوای با سرعت بیشتری چربی‌های شکم و پهلوت رو آب کنی، می‌تونی در کنار رژیمت برنامه ورزشی هم داشته باشی.</p>
+                    <p class="color-black text-right mb-0 bold-text sans">برای انتخاب برنامه ورزشی، کلیک کن:</p>
+                  </div>
+                  <section id="product-box" class="mb-20">
+                    <div v-for="package in selectedPackageItem.option.exercise" :key="package.id">
+                      <input type="checkbox" :id="'control_0'+package.id" name="select" v-model="packagesSportsSelectId" :value="package.id" class="product_input">
+                      <label :for="'control_0'+package.id">
+                        <div class="title-box">
+                          <h2 class="h6">{{package.title}}</h2>
+                          <p class="mb-0 h6 font-weight-normal" v-for="description in package.description">{{description}}</p>
+                        </div>
+                        <div class="amount-box">
+                          <div class="amount-content" v-if="package.price.offer">
+                            <p>{{package.price.amount}}</p>
+                            <p>
+                              <span>{{Math.round(((package.price.amount - (package.price.amount - package.price.offer))/package.price.amount)*100)}}</span>
+                              <span>%</span>
+                            </p>
+                          </div>
+                          <div class="amount-off">
+                            <p>{{(package.price.amount - package.price.offer) === 0 ? "رایگان" : (package.price.amount - package.price.offer)}}</p>
+                            <p>هزارتومان</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                    <p class="error mt-1 mb-0" v-if="!form.packageSelectId">لطفا محصول مورد نظر خودرا انتخاب کنید</p>
+                  </section>
+                  <div class="button_product_sticky">
+                    <div class="amount">
+                      <p class="bold-text">مجموع:</p>
+                      <p style="color: #002c00;" class="bold-text">{{this.returnSumPrice.selectedPackageItemSum}} <span class="h6">تومان</span></p>
+                    </div>
+                    <button type="submit" @click="offerInURL" class="btn-landing landing-selectsupport m-0" id="btn-register-pay">
+                      {{this.form.payment_method === 'card-payment' ? 'ارسال مشخصات' : 'خرید و دریافت رژیم'}}
+                      <span v-if="loading" class="spinner-border text-light spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <i v-else class="ic-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="inner" v-if="childStep==4" :key="childStep">
+                  <div class="factory panel mb-20">
+                    <h4>فاکتور خرید</h4>
+                    <hr>
+                    <div class="productList">
+                      <ul>
+                        <li>
+                          <p class="title">
+                            {{selectedPackageItem.title}}
+                            <label class="select m-0" for="slct" v-if="packages.products.length > 1">
+                              <select id="slct" v-model="form.packageSelectId" >
+                                <option v-for="packages in packages.products" :value="packages.id" v-if="packages.status === true">{{packages.title}}</option>
+                              </select>
+                              <span class="pointer">
+                                                    <span>تغییر رژیم</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 24 24" id="Layer_1" version="1.0" viewBox="0 0 24 24" xml:space="preserve"><polyline fill="none" points="21,8.5 12,17.5 3,8.5 " stroke="#19bfd3" stroke-miterlimit="10" stroke-width="4"/></svg>
+                                                </span>
+                            </label>
+                          </p>
+                          <div class="amount_box_invoice">
+                            <div class="productAmount">
+                              <del class="original_amount">
+                                {{(selectedPackageItem.price.amount * 1000).toLocaleString()}}
+                              </del>
+                              <div class="offer">
+                                <span class="offer_amount">{{((selectedPackageItem.price.amount - selectedPackageItem.price.offer) * 1000).toLocaleString()}}</span>
+                                <span class="">تومان</span>
+                              </div>
+                            </div>
+                            <div class="offer_count">
+                              <span class="percent">%</span><span class="percent_count">{{Math.round(((selectedPackageItem.price.amount - (selectedPackageItem.price.amount - selectedPackageItem.price.offer))/selectedPackageItem.price.amount)*100)}}</span>
+                              <p class="m-0">تخفیف</p>
+                            </div>
+                          </div>
+                        </li>
+                        <hr>
+                        <li>
+                          <p class="title">
+                            {{selectedPackageSupportItem.title}}
+                            <label class="select m-0" for="slct">
+                              <select id="slct" v-model="packagesSupportSelectId">
+                                <option v-for="packages in packagesSupport" :value="packages.id">{{packages.title}}</option>
+                              </select>
+                              <span class="pointer">
+                                                    <span>تغییر پشتیبانی</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 24 24" id="Layer_1" version="1.0" viewBox="0 0 24 24" xml:space="preserve"><polyline fill="none" points="21,8.5 12,17.5 3,8.5 " stroke="#19bfd3" stroke-miterlimit="10" stroke-width="4"/></svg>
+                                                </span>
+                            </label>
+                          </p>
+                          <div class="amount_box_invoice">
+                            <div class="productAmount">
+                              <del class="original_amount">
+                                {{(selectedPackageSupportItem.price.amount * 1000).toLocaleString()}}
+                              </del>
+                              <div class="offer">
+                                <span class="offer_amount">{{((selectedPackageSupportItem.price.amount - selectedPackageSupportItem.price.offer) * 1000).toLocaleString()}}</span>
+                                <span class="">تومان</span>
+                              </div>
+                            </div>
+                            <div class="offer_count">
+                              <span class="percent">%</span><span class="percent_count">{{Math.round(((selectedPackageSupportItem.price.amount - (selectedPackageSupportItem.price.amount - selectedPackageSupportItem.price.offer))/selectedPackageSupportItem.price.amount)*100)}}</span>
+                              <p class="m-0">تخفیف</p>
+                            </div>
+                          </div>
+                        </li>
+                        <hr>
+                        <li v-if="packagesSportsSelectId">
+                          <p class="title">
+                            {{selectedPackageSportsItem.title}}
+                            <label class="select m-0" for="slct" @click="packagesSportsSelectId=null">
+                                                        <span class="pointer_del">
+                                                    <span>حذف</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<g>
+	<path d="M64.6,10.6L256,202L446.6,11.4c6.7-7.2,16.1-11.3,26-11.4C494.4,0,512,17.6,512,39.4c0.2,9.8-3.7,19.2-10.6,26L308.8,256   l192.6,192.6c6.5,6.3,10.3,14.9,10.6,24c0,21.7-17.6,39.4-39.4,39.4c-10.2,0.4-20-3.4-27.2-10.6L256,309.9L65,501   c-6.7,6.9-15.9,10.9-25.6,11C17.6,512,0,494.3,0,472.6c-0.2-9.7,3.7-19.2,10.6-26L203.2,256L10.6,63.4C4.2,57.1,0.3,48.5,0,39.4   C0,17.6,17.6,0,39.4,0C48.9,0.1,57.9,3.9,64.6,10.6z"/>
+</g>
+</svg>
+                                                </span>
+                            </label>
+                          </p>
+                          <div class="amount_box_invoice">
+                            <div class="productAmount">
+                              <del class="original_amount">
+                                {{(selectedPackageSportsItem.price.amount * 1000).toLocaleString()}}
+                              </del>
+                              <div class="offer">
+                                <span class="offer_amount">{{((selectedPackageSportsItem.price.amount - selectedPackageSportsItem.price.offer) * 1000).toLocaleString()}}</span>
+                                <span class="">تومان</span>
+                              </div>
+                            </div>
+                            <div class="offer_count">
+                              <span class="percent">%</span><span class="percent_count">{{Math.round(((selectedPackageSportsItem.price.amount - (selectedPackageSportsItem.price.amount - selectedPackageSportsItem.price.offer))/selectedPackageSportsItem.price.amount)*100)}}</span>
+                              <p class="m-0">تخفیف</p>
+                            </div>
+                          </div>
+                        </li>
+                        <hr v-if="packagesSportsSelectId">
+                        <li>
+                          <p class="bold-text mb-1 color-black">جمع کل</p>
+                          <p style="color: #000;" class="bold-text mb-1">{{this.returnSumPrice.selectedPackageItemSumOrigin}} <span class="h6">تومان</span></p>
+                        </li>
+                        <li>
+                          <p class="bold-text mb-0 color-black">تخفیف</p>
+                          <p style="color: #000;" class="bold-text mb-0">{{this.returnSumPrice.selectedPackageItemSumOffer}} <span class="h6">تومان</span></p>
+                        </li>
+                        <hr>
+                        <li>
+                          <p class="bold-text mb-0 color-black">مبلغ قابل پرداخت</p>
+                          <p style="color: rgb(49 106 88);font-size: 26px;" class="bold-text mb-0">{{this.returnSumPrice.selectedPackageItemSum}} <span class="h6">تومان</span></p>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="offer-box position-relative" v-if="form.offer_code_valid">
+                    <p class="mt-0 mb-2 text-right" @click="$('#offer-box').slideToggle()">کد تخفیف داری؟</p>
+                    <div class="input-holder hidden" id="offer-box">
+                      <input type="text" v-model="form.offerCode" ref="tel-2" placeholder="کد تخفیف رو وارد کن" id="offer-input" maxlength="11">
+                      <button type="button" @click="offerCodeSub()" id="offer-button" :disabled="loading" class="btn-bg-success">
+                        <i v-if="loading" class="spinner-border spinner-border-sm"></i>
+                        <i v-else class="form2-s">ثبت</i>
+                      </button>
+                    </div>
+                    <p v-if="!form.offerCodeValid" class="text-danger">کد تخفیف معتبر نمیباشد!</p>
+                    <div class="offer-box-info hidden mb-4">
+                      <ul></ul>
+                    </div>
+                    <!--                                    <div id="holder1" class="holder_div hidden">-->
+                    <!--                                    </div>-->
+                    <!--                                    <span id="holder2" class="holder_text hidden">لطفا صبر کنید...</span>-->
+                  </div>
+
+                  <div class="mb-20" v-if="selectedPackageItem.id">
+                    <div class="selection-payment-type">
+                      <div class="payment-type">
+                        <input id="online-payment" class="payment-check" type="radio" name="payment" value="online-payment" v-model="form.payment_method" />
+                        <label class="payment-type-container" for="online-payment" @click="$('.card-payment-detail-container').slideUp();">
+                          <div class="payment-type-content">
+                            <div class="dot-container">
+                              <div class="dot"></div>
+                            </div>
+                            <div class="description">
+                              <p class="title">پرداخت اینترنتی<span style="font-size: 12px">(پیشنهاد برنافیت)</span></p>
+                              <p class="detail">این روش به صورت سریع و آنی از طریق کلیه کارت‌های بانکی عضو شتاب انجام می‌شود.</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                      <div class="payment-type">
+                        <input id="card-payment" class="payment-check" type="radio" name="payment" value="card-payment" v-model="form.payment_method" />
+                        <label class="payment-type-container" for="card-payment" @click="$('.card-payment-detail-container').slideDown();">
+                          <div class="payment-type-content">
+                            <div class="dot-container">
+                              <div class="dot"></div>
+                            </div>
+                            <div class="description">
+                              <p class="title">انتقال کارت ‌به ‌کارت</p>
+                              <p class="detail">تایید پرداخت کارت به کارت، حداکثر تا 24 ساعت زمان خواهد برد.</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <p class="error mt-2 mb-0" v-if="!form.payment_method">لطفا یک روش پرداخت انتخاب کنید</p>
+                  </div>
+                  <div class="card-payment-detail-container mb-20">
+                    <!--                                <p class="title-desk text-right mb-2">تایید پرداخت کارت به کارت، حداکثر تا 24 ساعت زمان خواهد برد!</p>-->
+                    <p class="title-desk text-right">جهت پرداخت کارت به کارت، ابتدا <span style="font-weight: 500;color: red">مبلغ {{this.returnSumPrice.selectedPackageItemSum}}هزارتومان</span> را به شماره کارت زیر انتقال داده و رسید واریزی را نزد خود نگاه دارید </p>
+                    <img :src="form.card_payment_img_url" alt="">
+                    <p class="info">چنانچه در حین انتقال‌وجه با مشکل مواجه شدید، مشکل خود را با شماره <span style="color: #0d8d00; font-weight: 500;font-size: 15px">91016633-021</span> درمیان بگذارید. </p>
+                    <div class="form-field card-numbers mt-15">
+                      <input class="text-box card-number" name="card-digits" id="card-digits" type="tel" minlength="4" maxlength="4" max="9999" min="0" v-model="userInfo.payment.credit" placeholder="- - - -">
+                      <input class="text-box card-number disable" disabled="" placeholder="* * * *">
+                      <input class="text-box card-number disable" disabled="" placeholder="* * * *">
+                      <input class="text-box card-number disable" disabled="" placeholder="* * * *">
+                    </div>
+                    <p class="info card-number-valid">۴ رقم آخر شماره کارتی که با آن پرداخت کرده‌اید را وارد کنید.</p>
+                    <div class="mt-15">
+                      <date-picker v-model="form.date" type="date" format="تاریخ jYYYY-jMM-jDD" placeholder="تاریخ واریز"></date-picker>
+                      <p class="info date-valid">تاریخ موجود در رسید واریزی را انتخاب کنید.</p>
+                    </div>
+                    <div class="mt-15">
+                      <date-picker v-model="form.time" type="time" format="ساعت HH:mm" placeholder="ساعت واریز"></date-picker>
+                      <p class="info time-valid">ساعت موجود در رسید واریزی را انتخاب کنید.</p>
+                    </div>
+                  </div>
+
+                  <button type="submit" @click="userPayment()" class="btn-landing landing-payment" id="btn-register-pay">
+                    {{this.form.payment_method === 'card-payment' ? 'ارسال مشخصات' : 'خرید و دریافت رژیم'}}
+                    <span v-if="loading" class="spinner-border text-light spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <i v-else class="ic-arrow-right"></i>
+                  </button>
+                </div>
+                <div class="inner" v-if="childStep==5" :key="childStep">
+                  <div class="card-payment-success">
+                    <img src="assets/images/success.png" alt="">
+                    <p class="first-txt-success">اطلاعات پرداخت شما با موفقیت ثبت و جهت بررسی برای واحد مالی برنافیت ارسال شد.</p>
+                    <p class="txt-success">نتیجه‌ی بررسی حداکثر تا 24 ساعت آینده از طریق پیامک به شماره {{form.phone}} ارسال خواهد شد.</p>
+                    <p class="txt-success">ارتباط با واحد مالی: <a href="tel:02191016633" style="margin-bottom: 5px; font-size: 18px;">۹۱۰۱۶۶۳۳ - ۰۲۱</a> داخلی 3</p>
+                  </div>
+                </div>
+              </transition>
+            </div>
+
+            <div class="" v-if="step==4" :key="step">
+              <div class="card-payment-success">
+                <p class="secound-txt-success">کاربر گرامی شما قبلا با شماره زیر عضو رژیم برنافیت دکتر کرمانی شده اید.</p>
+                <p class="secound-txt-success color-red">{{form.phone}}</p>
+                <p class="secound-txt-success">لطفا جهت ورود به پنل نرم افزار روی دکمه زیر کلیک کنید.</p>
+                <button type="submit" @click=" window.location.href = 'https://drurl.ir/rejim'" class="btn-landing">
+                  ورود به نرم افزار رژیم برنافیت
+                </button>
+              </div>
+            </div>
+
+          </transition>
+
+        </div>
+
+
+      </section>
+
+
+      <!--    فرم    -->
+      <section v-if="false" class="container mb-30">
+        <div class="gettingAdvice_container">
+          <div class="header">
+            <svg height="104" viewBox="0 0 150 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="75" cy="100.5" rx="70" ry="3.5" fill="#B59AE1"/>
+              <path d="M75.06 75.2907C75.06 75.2907 64.21 84.9507 59.48 84.2207C54.75 83.4907 50.6 76.4107 50.6 76.4107C50.6 76.4107 58.6 75.0707 58.3 69.4107C56.69 34.4107 75.06 37.8107 75.06 37.8107V75.2907Z" fill="#8050CD"/>
+              <path d="M75.06 75.2913C75.06 75.2913 85.92 84.9513 90.64 84.2213C95.36 83.4913 99.52 76.4113 99.52 76.4113C99.52 76.4113 91.72 75.0713 91.82 69.4113C92.49 33.9213 75.06 37.8113 75.06 37.8113V75.2913Z" fill="#8050CD"/>
+              <path d="M75.06 99.8601H63.76L61.29 80.3301L75.06 76.4102V99.8601Z" fill="#F9C172"/>
+              <path d="M75.06 81.94L67.19 79.07V63.25H75.06V78.58V81.94Z" fill="#F9C172"/>
+              <path d="M45 99.8613H75.06L62.83 79.8613L58.48 80.3013C45 80.3313 45 99.8613 45 99.8613Z" fill="#6830C3"/>
+              <path d="M75.06 99.8601H86.37L88.83 80.3301L75.06 76.4102V99.8601Z" fill="#FFB45A"/>
+              <path d="M75.06 81.94L82.94 79.07V63.25H75.06V78.58V81.94Z" fill="#F9C172"/>
+              <path d="M105.12 99.8613H75.06L87.29 79.8613L91.65 80.3013C105.12 80.3313 105.12 99.8613 105.12 99.8613Z" fill="#6830C3"/>
+              <path d="M75.06 81.94L82.94 79.07V63.25H75.06V81.94Z" fill="#FFB45A"/>
+              <path d="M63.42 52.08L63.14 51.96C61.58 51.3 61.2 51.21 61.31 54.71C61.31 54.71 61.31 61.01 63.63 61.32C63.8303 62.2829 64.167 63.2123 64.63 64.08C66.93 68.27 70.97 73.08 75.1 73.08V42.84C62.26 41.27 64.66 46.79 63.42 52.08Z" fill="#FACB88"/>
+              <path d="M86.7 52.08L86.99 51.96C88.55 51.3 88.93 51.21 88.81 54.71C88.81 54.71 88.81 61.01 86.49 61.32C86.2897 62.2829 85.953 63.2123 85.49 64.08C83.19 68.27 79.16 73.08 75.02 73.08V42.84C87.87 41.27 85.47 46.79 86.7 52.08Z" fill="#F9C172"/>
+              <path d="M86.7 52.0806C86.7 52.0806 71.13 49.1406 69.41 39.9106C69.41 39.9106 85.41 35.5106 86.7 47.7206C86.81 48.8006 86.7 52.0806 86.7 52.0806Z" fill="#8050CD"/>
+              <path d="M63.37 52.0801C63.37 52.0801 63.25 48.1601 63.37 46.8601C64.25 37.0001 74.67 39.8601 74.67 39.8601C74.67 39.8601 68.03 51.5501 63.37 52.0801Z" fill="#8050CD"/>
+              <path d="M56.38 91.2508C56.38 91.2508 59.38 81.2508 62.83 79.8908C65.43 78.8908 67.19 73.0508 67.19 73.0508C67.0895 77.274 67.4246 81.4963 68.19 85.6508C69.1 89.7108 75.07 99.8608 75.07 99.8608L67.38 92.0008C66.348 90.944 65.0313 90.2095 63.5899 89.8864C62.1485 89.5633 60.6444 89.6656 59.26 90.1808L56.38 91.2508Z" fill="white"/>
+              <path d="M93.75 91.2508C93.75 91.2508 90.7 81.2508 87.29 79.8908C84.69 78.8908 82.93 73.0508 82.93 73.0508C83.0273 77.2739 82.6922 81.4959 81.93 85.6508C81.01 89.7108 75.04 99.8608 75.04 99.8608L82.73 92.0008C83.7643 90.9442 85.0826 90.21 86.5255 89.887C87.9683 89.564 89.4739 89.666 90.86 90.1808L93.75 91.2508Z" fill="white"/>
+              <path d="M83.36 69.5615H76.36V68.5615H83.36C84.1349 68.5618 84.8907 68.3214 85.5231 67.8736C86.1555 67.4258 86.6331 66.7925 86.89 66.0615L88.14 62.5215L89.09 62.8615L87.81 66.3915C87.4848 67.3137 86.8828 68.113 86.0864 68.6803C85.29 69.2477 84.3378 69.5554 83.36 69.5615Z" fill="#6830C3"/>
+              <path d="M77.36 70.7703H79.01C79.4608 70.7703 79.8932 70.5912 80.212 70.2724C80.5308 69.9536 80.71 69.5212 80.71 69.0703H75.65C75.65 69.2944 75.6943 69.5163 75.7803 69.7232C75.8664 69.9301 75.9925 70.118 76.1514 70.276C76.3103 70.434 76.4989 70.559 76.7063 70.6438C76.9137 70.7286 77.1359 70.7716 77.36 70.7703Z" fill="#431CAD"/>
+              <path d="M79.01 67.3614H77.36C77.1351 67.36 76.9121 67.4034 76.704 67.4888C76.496 67.5743 76.3069 67.7002 76.1479 67.8593C75.9888 68.0183 75.8629 68.2073 75.7775 68.4154C75.692 68.6235 75.6487 68.8464 75.65 69.0713H80.71C80.7113 68.8473 80.6683 68.6251 80.5835 68.4177C80.4986 68.2103 80.3736 68.0217 80.2156 67.8628C80.0576 67.7039 79.8698 67.5778 79.6629 67.4917C79.456 67.4057 79.2341 67.3614 79.01 67.3614Z" fill="#6830C3"/>
+              <path d="M73.88 34.03C70.2845 34.0433 66.8412 35.4829 64.3062 38.0328C61.7713 40.5827 60.352 44.0345 60.36 47.63V49.92H62.36V47.63C62.3546 44.556 63.5686 41.6054 65.7357 39.4252C67.9028 37.245 70.846 36.0132 73.92 36H75.1V34L73.88 34.03Z" fill="#6830C3"/>
+              <path d="M76.24 34.0312H75.06V36.0312H76.24C79.3105 36.0418 82.2518 37.2683 84.4201 39.4423C86.5885 41.6163 87.8074 44.5607 87.81 47.6312V49.9212H89.81V47.6312C89.8126 45.847 89.4636 44.0798 88.783 42.4306C88.1023 40.7813 87.1033 39.2823 85.8431 38.0193C84.5829 36.7563 83.0861 35.754 81.4384 35.0697C79.7906 34.3854 78.0242 34.0326 76.24 34.0312Z" fill="#6830C3"/>
+              <path d="M92.98 50.161C92.2912 49.3759 91.3294 48.8825 90.29 48.781C89.7428 48.6355 89.1672 48.6355 88.62 48.781V63.621C89.1672 63.7664 89.7428 63.7664 90.29 63.621C91.3294 63.5194 92.2912 63.026 92.98 62.241C94 60.971 94 51.431 92.98 50.161Z" fill="#6830C3"/>
+              <path d="M86.58 51.7112V60.7112C86.5377 61.3505 86.7121 61.9853 87.075 62.5133C87.4379 63.0412 87.968 63.4316 88.58 63.6212V48.7812C87.9635 48.9701 87.4297 49.3631 87.0662 49.8956C86.7027 50.428 86.5312 51.0684 86.58 51.7112Z" fill="#6830C3"/>
+              <path d="M59.81 48.781C58.7679 48.883 57.8031 49.3761 57.11 50.161C56.11 51.431 56.11 60.971 57.11 62.241C57.8031 63.0259 58.7679 63.519 59.81 63.621C60.3572 63.7664 60.9328 63.7664 61.48 63.621V48.781C60.9328 48.6355 60.3572 48.6355 59.81 48.781Z" fill="#6830C3"/>
+              <path d="M61.51 48.7812V63.6212C62.1219 63.4316 62.6521 63.0412 63.015 62.5133C63.3778 61.9853 63.5522 61.3505 63.51 60.7112V51.7112C63.5569 51.0687 63.3847 50.4292 63.0215 49.8971C62.6582 49.365 62.1255 48.9717 61.51 48.7812Z" fill="#6830C3"/>
+              <path d="M144.903 30.2107C145.135 29.9295 145.614 29.9301 145.847 30.2107C146.056 30.452 145.982 30.7938 146.037 31.0845C146.215 32.4263 147.367 33.5576 148.712 33.7138C148.987 33.7595 149.308 33.7001 149.534 33.8988C149.815 34.1307 149.816 34.6101 149.534 34.8426C149.308 35.0407 148.987 34.982 148.711 35.027C147.367 35.182 146.215 36.3157 146.037 37.657C145.983 37.9476 146.055 38.2888 145.847 38.5301C145.614 38.8113 145.135 38.8113 144.903 38.5301C144.715 38.3188 144.76 38.0176 144.724 37.7576C144.604 36.5545 143.706 35.4838 142.55 35.1363C142.199 35.0095 141.822 35.0238 141.458 34.9676C141.234 34.9263 141.106 34.7232 141 34.542V34.2007C141.082 34.0726 141.154 33.9282 141.287 33.8451C141.443 33.7438 141.638 33.7507 141.816 33.7345C142.48 33.7007 143.129 33.4382 143.636 33.0088C144.283 32.4682 144.696 31.6545 144.739 30.812C144.753 30.6051 144.753 30.3726 144.903 30.2107ZM143.899 34.3707C144.489 34.7538 144.991 35.2588 145.375 35.8482C145.759 35.2576 146.263 34.7538 146.853 34.3707C146.263 33.987 145.759 33.4832 145.376 32.8932C144.991 33.4826 144.488 33.9857 143.899 34.3707Z" fill="white"/>
+              <path d="M119.678 26.1446C119.837 25.9516 120.166 25.952 120.325 26.1446C120.469 26.3101 120.418 26.5446 120.456 26.744C120.578 27.6647 121.369 28.4409 122.291 28.5481C122.48 28.5794 122.7 28.5386 122.855 28.675C123.048 28.8341 123.048 29.163 122.855 29.3225C122.7 29.4584 122.48 29.4181 122.291 29.449C121.368 29.5553 120.578 30.3332 120.456 31.2534C120.418 31.4528 120.468 31.687 120.325 31.8525C120.166 32.0455 119.837 32.0455 119.678 31.8525C119.549 31.7075 119.58 31.5009 119.555 31.3225C119.473 30.497 118.856 29.7625 118.063 29.524C117.822 29.437 117.564 29.4468 117.314 29.4083C117.161 29.38 117.072 29.2406 117 29.1162V28.8821C117.056 28.7942 117.105 28.6951 117.197 28.6381C117.304 28.5686 117.437 28.5734 117.56 28.5622C118.015 28.5391 118.461 28.359 118.809 28.0644C119.253 27.6934 119.536 27.1351 119.565 26.5571C119.575 26.4151 119.575 26.2556 119.678 26.1446ZM118.989 28.9987C119.394 29.2616 119.738 29.6081 120.002 30.0125C120.265 29.6072 120.611 29.2616 121.016 28.9987C120.611 28.7354 120.265 28.3898 120.002 27.985C119.738 28.3894 119.393 28.7346 118.989 28.9987Z" fill="white"/>
+              <path d="M11.4025 35.2098C11.645 34.9167 12.1525 34.9329 12.3725 35.2448C12.55 35.4785 12.4838 35.7879 12.5138 36.0598C12.5838 38.1629 13.325 40.2317 14.575 41.921C15.755 43.5198 17.3894 44.781 19.24 45.5067C20.4538 45.9929 21.76 46.2229 23.065 46.2454C23.3957 46.2185 23.7219 46.4723 23.7432 46.8104C23.7888 47.1623 23.4838 47.501 23.1282 47.4917C21.2557 47.4954 19.3819 47.9942 17.7663 48.9448C17.5282 49.1048 17.1832 49.1023 16.9719 48.8979C16.6688 48.6467 16.7075 48.1192 17.0488 47.9204C17.735 47.506 18.4682 47.1667 19.2269 46.9079C19.2269 46.8892 19.2275 46.8517 19.2275 46.8329C15.8594 45.6854 13.0907 42.926 11.9257 39.5648C11.9019 39.4448 11.8063 39.5354 11.8038 39.6098C10.6432 42.921 7.92505 45.6404 4.6138 46.8017C4.5388 46.8142 4.44255 46.8917 4.56942 46.921C7.9513 48.101 10.7482 50.8973 11.8563 54.311C11.9525 54.1917 11.9682 54.0329 12.0257 53.8954C12.2607 53.2829 12.5444 52.6892 12.875 52.1223C12.9825 51.9167 13.1957 51.7517 13.4363 51.7623C13.7625 51.7504 14.0657 52.0429 14.0619 52.3704C14.0782 52.5417 13.9869 52.6929 13.9063 52.836C12.9825 54.4342 12.4982 56.2804 12.495 58.1254C12.5025 58.4579 12.2063 58.7529 11.8738 58.7423C11.5644 58.751 11.2757 58.4954 11.2569 58.1848C11.22 57.5154 11.2119 56.8398 11.0669 56.1823C10.6813 54.0554 9.61317 52.061 8.06817 50.5504C6.57755 49.0717 4.63505 48.0598 2.5713 47.6754C1.89192 47.5298 1.19505 47.526 0.505049 47.4798C0.101299 47.4242 -0.128701 46.9204 0.0762993 46.5729C0.196299 46.3235 0.486924 46.2273 0.747549 46.2429C2.01567 46.2217 3.2813 45.9898 4.46317 45.5248C6.52942 44.7267 8.3288 43.2592 9.53192 41.3992C10.5657 39.8167 11.1694 37.9504 11.2332 36.0592C11.2619 35.7748 11.195 35.4429 11.4025 35.2098Z" fill="white"/>
+              <path d="M24.2695 41.7748C24.6939 41.6367 25.1514 42.0561 25.0483 42.4911C24.9858 42.9523 24.3633 43.1592 24.0264 42.8461C23.657 42.5492 23.8014 41.8786 24.2695 41.7748Z" fill="white"/>
+              <path d="M46.6207 49.169C46.8058 48.9434 47.1904 48.9439 47.376 49.169C47.482 49.283 47.497 49.4456 47.501 49.5946C47.5215 50.5745 47.9196 51.5408 48.5984 52.248C49.3066 52.9998 50.3154 53.4609 51.3493 53.4924C51.4918 53.5004 51.6464 53.4964 51.7709 53.578C51.877 53.644 51.934 53.7595 52 53.8615V54.1336C51.9345 54.2357 51.877 54.3517 51.7704 54.4182C51.6459 54.4998 51.4913 54.4953 51.3488 54.5028C50.3039 54.5358 49.2831 55.0059 48.5739 55.7737C47.9096 56.4784 47.521 57.4332 47.501 58.4016C47.4985 58.5616 47.476 58.7382 47.352 58.8532C47.1584 59.0533 46.7988 59.0418 46.6207 58.8272C46.4882 58.6836 46.4997 58.4776 46.4907 58.2965C46.4407 57.1381 45.8495 56.0198 44.9247 55.3215C44.2619 54.8089 43.4317 54.5198 42.5949 54.5008C42.4343 54.4988 42.2583 54.4753 42.1432 54.3517C41.9427 54.1581 41.9542 53.7985 42.1687 53.6205C42.2978 53.5004 42.4823 53.4984 42.6479 53.4924C43.6807 53.4604 44.6906 53.0013 45.3983 52.248C46.0275 51.5898 46.4176 50.71 46.4862 49.8022C46.5052 49.5891 46.4652 49.3416 46.6207 49.169ZM46.7212 52.169C46.3141 52.8122 45.7574 53.3604 45.1087 53.759C44.9762 53.839 44.8371 53.9091 44.7096 53.9976C45.2258 54.2927 45.7269 54.6253 46.1301 55.0674C46.4842 55.4246 46.7443 55.8572 46.9983 56.2874C47.1284 56.0868 47.2354 55.8722 47.374 55.6772C47.8586 54.9594 48.5414 54.3877 49.3116 53.9981C48.7984 53.732 48.3163 53.3999 47.9161 52.9803C47.54 52.6101 47.2614 52.16 46.9983 51.7073C46.8963 51.8554 46.8183 52.0179 46.7212 52.169Z" fill="white"/>
+              <path d="M74.774 14.2112C75.0052 13.9293 75.4859 13.9299 75.7177 14.2112C75.8502 14.3537 75.869 14.5568 75.874 14.743C75.8996 15.9674 76.3971 17.1749 77.2452 18.0587C78.1302 18.998 79.3909 19.5743 80.6827 19.6137C80.8609 19.6237 81.054 19.6187 81.2096 19.7205C81.3421 19.803 81.4134 19.9474 81.4959 20.0749V20.4149C81.414 20.5424 81.3421 20.6874 81.209 20.7705C81.0534 20.8724 80.8602 20.8668 80.6821 20.8762C79.3765 20.9174 78.1009 21.5049 77.2146 22.4643C76.3846 23.3449 75.899 24.538 75.874 25.748C75.8709 25.948 75.8427 26.1687 75.6877 26.3124C75.4459 26.5624 74.9965 26.548 74.774 26.2799C74.6084 26.1005 74.6227 25.843 74.6115 25.6168C74.549 24.1693 73.8102 22.7718 72.6546 21.8993C71.8265 21.2587 70.789 20.8974 69.7434 20.8737C69.5427 20.8712 69.3227 20.8418 69.179 20.6874C68.9284 20.4455 68.9427 19.9962 69.2109 19.7737C69.3721 19.6237 69.6027 19.6212 69.8096 19.6137C71.1002 19.5737 72.3621 18.9999 73.2465 18.0587C74.0327 17.2362 74.5202 16.1368 74.6059 15.0024C74.6296 14.7362 74.5796 14.4268 74.774 14.2112ZM74.8996 17.9599C74.3909 18.7637 73.6952 19.4487 72.8846 19.9468C72.719 20.0468 72.5452 20.1343 72.3859 20.2449C73.0309 20.6137 73.6571 21.0293 74.1609 21.5818C74.6034 22.028 74.9284 22.5687 75.2459 23.1062C75.4084 22.8555 75.5421 22.5874 75.7152 22.3437C76.3209 21.4468 77.174 20.7324 78.1365 20.2455C77.4952 19.913 76.8927 19.498 76.3927 18.9737C75.9227 18.5112 75.5746 17.9487 75.2459 17.383C75.1184 17.568 75.0209 17.7712 74.8996 17.9599Z" fill="white"/>
+              <path d="M135.903 4.2107C136.135 3.92945 136.614 3.93008 136.847 4.2107C137.056 4.45195 136.982 4.79383 137.037 5.08445C137.215 6.42633 138.367 7.55758 139.712 7.71383C139.987 7.75945 140.308 7.70008 140.534 7.89883C140.815 8.1307 140.816 8.61008 140.534 8.84258C140.308 9.0407 139.987 8.98195 139.711 9.02695C138.367 9.18195 137.215 10.3157 137.037 11.657C136.982 11.9476 137.055 12.2888 136.847 12.5301C136.614 12.8113 136.135 12.8113 135.903 12.5301C135.715 12.3188 135.76 12.0176 135.724 11.7576C135.604 10.5545 134.706 9.48383 133.55 9.13633C133.199 9.00945 132.822 9.02383 132.458 8.96758C132.234 8.92633 132.106 8.7232 132 8.54195V8.2007C132.082 8.07258 132.154 7.9282 132.287 7.84508C132.443 7.74383 132.638 7.7507 132.816 7.73445C133.48 7.7007 134.129 7.4382 134.636 7.00883C135.283 6.4682 135.696 5.65445 135.739 4.81195C135.753 4.60508 135.752 4.37258 135.903 4.2107ZM134.899 8.3707C135.489 8.75383 135.991 9.25883 136.375 9.8482C136.759 9.25758 137.262 8.75383 137.853 8.3707C137.263 7.98695 136.759 7.4832 136.376 6.8932C135.991 7.48258 135.487 7.9857 134.899 8.3707Z" fill="white"/>
+              <circle cx="128" cy="39" r="3.25" stroke="white" stroke-width="1.5"/>
+              <circle cx="18" cy="4" r="3.25" stroke="white" stroke-width="1.5"/>
+              <circle cx="121" cy="55" r="1.25" stroke="white" stroke-width="1.5"/>
+              <circle cx="32" cy="24" r="1.25" stroke="white" stroke-width="1.5"/>
+            </svg>
+            <div class="shape">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="52" viewBox="0 0 60 52" fill="none">
+                <path d="M0 26L15 0.0192375H45L60 26L45 51.9808H15L0 26Z" fill="#9770D6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="content">
+            <div class="header_caption">
+              <h3>دریافت مشاوره‌ی رژیم</h3>
+              <p>
+                برای <span class="bold-text">دریافت مشاوره رایگان</span> شمارت رو ثبت و یکی از روش‌های زیر رو انتخاب کن
+              </p>
+            </div>
+            <div class="form_content">
+              <form @submit.prevent="register(1,'form1')" v-if="submitStatus!=='success'">
+                <c-input
+                        v-model="form.phone"
+                        ref="tel-1"
+                        label="شماره موبایل"
+                        type="tel"
+                        numeric
+                        required
+                        max="11"
+                        style="margin-bottom: 15px"
+                ></c-input>
+                <p v-if="invalidTel" class="small text-center">لطفا شماره موبایل را بصورت صحیح وارد کنید</p>
+                <div class="adviceType">
+                  <input type="radio" name="adviceType" id="adviceType_whatsapp" v-model="form.adviceType" value="whatsapp">
+                  <label for="adviceType_whatsapp">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4.25895 16.5939C3.14076 14.7089 2.74916 12.4805 3.15768 10.3272C3.56621 8.1739 4.74675 6.2438 6.47764 4.89933C8.20852 3.55486 10.3707 2.8885 12.5581 3.02539C14.7455 3.16227 16.8078 4.09298 18.3575 5.64274C19.9073 7.19251 20.838 9.25472 20.9749 11.4421C21.1118 13.6296 20.4455 15.7917 19.101 17.5226C17.7565 19.2535 15.8264 20.4341 13.6732 20.8426C11.5199 21.2511 9.29149 20.8596 7.40649 19.7414L7.40651 19.7413L4.29808 20.6294C4.16948 20.6662 4.03338 20.6678 3.90391 20.6343C3.77443 20.6007 3.65628 20.5332 3.56171 20.4386C3.46713 20.344 3.39956 20.2259 3.36601 20.0964C3.33246 19.9669 3.33415 19.8308 3.37089 19.7022L4.25902 16.5938L4.25895 16.5939Z" stroke="#B0B0B0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M14.2607 17.25C13.274 17.2514 12.2967 17.0581 11.3848 16.6811C10.4729 16.3042 9.64441 15.751 8.9467 15.0533C8.24899 14.3556 7.69582 13.5271 7.31887 12.6152C6.94192 11.7033 6.74861 10.726 6.75001 9.73934C6.75224 9.04482 7.02986 8.37953 7.52196 7.88943C8.01406 7.39932 8.68047 7.12441 9.375 7.125V7.125C9.48892 7.125 9.60081 7.15512 9.69934 7.21229C9.79787 7.26947 9.87953 7.35168 9.93605 7.45059L11.0321 9.36865C11.0982 9.48432 11.1323 9.61551 11.1309 9.74873C11.1294 9.88195 11.0926 10.0124 11.024 10.1266L10.1438 11.5937C10.5967 12.5986 11.4014 13.4033 12.4063 13.8562V13.8562L13.8734 12.976C13.9876 12.9074 14.118 12.8706 14.2513 12.8691C14.3845 12.8677 14.5157 12.9018 14.6313 12.9679L16.5494 14.064C16.6483 14.1205 16.7305 14.2021 16.7877 14.3007C16.8449 14.3992 16.875 14.5111 16.875 14.625V14.625C16.873 15.3187 16.5973 15.9837 16.1077 16.4752C15.6182 16.9667 14.9544 17.2452 14.2607 17.25V17.25Z" stroke="#B0B0B0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    مشاوره واتساپ
+                  </label>
+                  <input type="radio" name="adviceType" id="adviceType_call" v-model="form.adviceType" value="call">
+                  <label for="adviceType_call" class="">
+                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5.66965 9.70238C6.44762 11.2929 7.73687 12.5763 9.3309 13.347C9.44753 13.4023 9.57654 13.4262 9.70523 13.4165C9.83392 13.4067 9.95786 13.3636 10.0648 13.2915L12.4119 11.7264C12.5157 11.6572 12.6352 11.6149 12.7594 11.6035C12.8837 11.5921 13.0088 11.6119 13.1235 11.661L17.5144 13.5428C17.6636 13.6062 17.7881 13.7163 17.8693 13.8566C17.9504 13.9969 17.9838 14.1598 17.9643 14.3207C17.8255 15.4067 17.2956 16.4049 16.4739 17.1283C15.6521 17.8518 14.5948 18.2509 13.5 18.2509C10.1185 18.2509 6.87548 16.9076 4.48439 14.5166C2.0933 12.1255 0.75 8.88246 0.75 5.50095C0.750058 4.40611 1.14918 3.34883 1.87264 2.52708C2.5961 1.70533 3.59428 1.17545 4.68028 1.03667C4.84117 1.0172 5.00403 1.05054 5.14432 1.13167C5.28461 1.21281 5.39473 1.33734 5.4581 1.4865L7.34158 5.8813C7.3903 5.99497 7.41015 6.11893 7.39936 6.24214C7.38858 6.36534 7.3475 6.48397 7.27977 6.58745L5.72011 8.97055C5.64912 9.07775 5.60716 9.20154 5.59831 9.32981C5.58947 9.45808 5.61405 9.58645 5.66965 9.70238V9.70238Z" stroke="#B0B0B0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    مشاوره تلفنی
+                  </label>
+                </div>
+                <button type="submit" class="btn-gettingAdvice form1-s" >ثبت
+                  <i v-if="loading" class="spinner-border spinner-border-sm"></i>
+                </button>
+              </form>
+              <p :class="[submitStatus=='error'? 'error':'success text-center m-0']">{{ response.msg }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--    ویژگی ها    -->
+      <section class="container mb-30">
+        <header class="header-title">
+          <h2>چرا ماراتن لاغری گروهی؟</h2>
+        </header>
+        <div id="property-container">
+
+          <div class="item-property panel mb-10">
+            <img src="assets/images/why-bornafit-icon2.png" alt="">
+            <div class="content-box">
+              <h6 class="font-weight-bold">موفق‌ترین رژیم لاغری دکتر کرمانی</h6>
+              <p>دکترکرمانی بعد از سال‌ها تحقیق بر روی رژیم‌گیرنده‌ها به این نتیجه رسید که رژیم گروهی، بهترین راه برای افرادیه که در رژیم انگیزه‌شون کم می‌شه و لاغری گروهی برنافیت رو طراحی کرد.</p>
+            </div>
+          </div>
+
+          <div class="item-property panel mb-10">
+            <img src="assets/images/why-bornafit-icon1.png" alt="">
+            <div class="content-box">
+              <h6 class="font-weight-bold">رژیم فردی با لاغری گروهی</h6>
+              <p>با لاغری گروهی علاوه بر این که رژیم اختصاصی خودت رو دریافت می‌کنی، تو گروه‌های لاغری برنافیت عضو می‎شی. تو این گروه‌ها تو چالش‌های سبک زندگی با هم‌گروهیات رقابت می‌کنی و ازشون انگیزه می‌گیری.</p>
+            </div>
+          </div>
+
+
+          <div class="item-property panel mb-10">
+            <img src="assets/images/why-bornafit-icon3.png" alt="">
+            <div class="content-box">
+              <h6 class="font-weight-bold">پشتیبانی اختصاصی زیر نظر متخصص تغذیه</h6>
+              <p>بدنت به کدوم غذاها نیاز داره؟ کدوم تمرین برات مفیده؟ و ... در طول رژیم یه متخصص تغذیه کنارته تا روندت رو چک کنه و هر سوالی داشتی راهنمایی کنه</p>
+            </div>
+          </div>
+
+
+          <div class="item-property panel">
+            <img src="assets/images/why-bornafit-icon4.png" alt="">
+            <div class="content-box">
+              <h6 class="font-weight-bold">امکان انتخاب برنامه ورزشی</h6>
+              <p>اگه می‌خوای تا عید با سرعت بیشتری چربی‌های شکمت رو آب کنی، می‌تونی در کنار رژیمت برنامه ورزشی هم داشته باشی (مختص لاغری شکم)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--    اسلایدر قبل و بعد    -->
+      <section class="container mb-60">
+        <header class="header-title">
+          <h2>نتایج موفق دوره های قبل</h2>
+        </header>
+        <div class="carouselWrapper">
+          <img src="assets/images/arrow-slider.png" alt="">
+          <div id="record-holder" class="owl-carousel owl-theme owl-slider">
+            <div class="item-slider">
+              <img src="assets/images/record-holder/01.jpg" alt="">
+            </div>
+            <div class="item-slider">
+              <img src="assets/images/record-holder/02.jpg" alt="">
+            </div>
+            <div class="item-slider">
+              <img src="assets/images/record-holder/03.jpg" alt="">
+            </div>
+            <div class="item-slider">
+              <img src="assets/images/record-holder/04.jpg" alt="">
+            </div>
+            <div class="item-slider">
+              <img src="assets/images/record-holder/05.jpg" alt="">
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+
+      <!--    ویدئو    -->
+      <section class="container mb-30">
+        <div class="video-container video-container-pro">
+          <div class="video_holder">
+                <span class="has-icon">
+                    <video poster="assets/images/cover2.jpg" ref="video-2" preload="none">
+                        <source src="assets/video/record_video.mp4" type="video/mp4" >
+                        Your browser does not support HTML5 video.
+                    </video>
+                     <i id="ic-play2" class="ic-play video-record" @click="play(2)"></i>
+                    <small>
+                        <strong>پخش ویدئو</strong>
+                     </small>
+                </span>
+          </div>
+          <div class="panel">
+                <span>
+                 <strong>نتایج فوق‌العاده شرکت‌کنندگان قبلی</strong>
+                </span>
+          </div>
+        </div>
+      </section>
+
+      <!--    باکس دکتر    -->
+      <section class="container mb-30">
+        <div class="drkermany_orginal_wrapper panel">
+          <div class="profile">
+            <div class="image">
+              <img class="rounded-circle" src="assets/images/drkermany.jpg" alt="">
+            </div>
+            <div class="person mr-2">
+              <h4 class="bold-text mb-1 color-black">برنافیت، بهترین متد لاغری از دید دکتر کرمانی</h4>
+              <div style="display: flex; align-items: end">
+                <p class="m-0 text-dark">
+                  برنافیت با این 2 کار فوق‌العاده غوغا کرد:
+                  <span class="d-block">1. لاغری گروهی</span>
+                  <span class="d-block">2. مشاوره‌ی اختصاصی</span>
+                </p>
+                <span @click="videoModal" class="videoModalBtn">مشاهده ویدئو</span>
+              </div>
+
+            </div>
+          </div>
+          <div class="content mt-10 hidden">
+            <div class="video-container video-container-pro">
+              <div class="video_holder m-0">
+                            <span class="has-icon">
+                                <video poster="assets/images/drcover.jpg" ref="video-3" preload="none">
+                                    <source src="assets/video/Dr-Kermany-Bornafit-group-diet.m4v" type="video/mp4" >
+                                    Your browser does not support HTML5 video.
+                                </video>
+                                <i id="ic-play3" class="ic-play video-record" @click="play(3)"></i>
+                                <small>
+                                    <strong>پخش ویدئو</strong>
+                                </small>
+                            </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--    فرم    -->
+      <section class="container mb-30" v-if="false">
+        <div class="gettingAdvice_container">
+          <div class="header">
+            <svg height="104" viewBox="0 0 150 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="75" cy="100.5" rx="70" ry="3.5" fill="#B59AE1"/>
+              <path d="M75.06 75.2907C75.06 75.2907 64.21 84.9507 59.48 84.2207C54.75 83.4907 50.6 76.4107 50.6 76.4107C50.6 76.4107 58.6 75.0707 58.3 69.4107C56.69 34.4107 75.06 37.8107 75.06 37.8107V75.2907Z" fill="#8050CD"/>
+              <path d="M75.06 75.2913C75.06 75.2913 85.92 84.9513 90.64 84.2213C95.36 83.4913 99.52 76.4113 99.52 76.4113C99.52 76.4113 91.72 75.0713 91.82 69.4113C92.49 33.9213 75.06 37.8113 75.06 37.8113V75.2913Z" fill="#8050CD"/>
+              <path d="M75.06 99.8601H63.76L61.29 80.3301L75.06 76.4102V99.8601Z" fill="#F9C172"/>
+              <path d="M75.06 81.94L67.19 79.07V63.25H75.06V78.58V81.94Z" fill="#F9C172"/>
+              <path d="M45 99.8613H75.06L62.83 79.8613L58.48 80.3013C45 80.3313 45 99.8613 45 99.8613Z" fill="#6830C3"/>
+              <path d="M75.06 99.8601H86.37L88.83 80.3301L75.06 76.4102V99.8601Z" fill="#FFB45A"/>
+              <path d="M75.06 81.94L82.94 79.07V63.25H75.06V78.58V81.94Z" fill="#F9C172"/>
+              <path d="M105.12 99.8613H75.06L87.29 79.8613L91.65 80.3013C105.12 80.3313 105.12 99.8613 105.12 99.8613Z" fill="#6830C3"/>
+              <path d="M75.06 81.94L82.94 79.07V63.25H75.06V81.94Z" fill="#FFB45A"/>
+              <path d="M63.42 52.08L63.14 51.96C61.58 51.3 61.2 51.21 61.31 54.71C61.31 54.71 61.31 61.01 63.63 61.32C63.8303 62.2829 64.167 63.2123 64.63 64.08C66.93 68.27 70.97 73.08 75.1 73.08V42.84C62.26 41.27 64.66 46.79 63.42 52.08Z" fill="#FACB88"/>
+              <path d="M86.7 52.08L86.99 51.96C88.55 51.3 88.93 51.21 88.81 54.71C88.81 54.71 88.81 61.01 86.49 61.32C86.2897 62.2829 85.953 63.2123 85.49 64.08C83.19 68.27 79.16 73.08 75.02 73.08V42.84C87.87 41.27 85.47 46.79 86.7 52.08Z" fill="#F9C172"/>
+              <path d="M86.7 52.0806C86.7 52.0806 71.13 49.1406 69.41 39.9106C69.41 39.9106 85.41 35.5106 86.7 47.7206C86.81 48.8006 86.7 52.0806 86.7 52.0806Z" fill="#8050CD"/>
+              <path d="M63.37 52.0801C63.37 52.0801 63.25 48.1601 63.37 46.8601C64.25 37.0001 74.67 39.8601 74.67 39.8601C74.67 39.8601 68.03 51.5501 63.37 52.0801Z" fill="#8050CD"/>
+              <path d="M56.38 91.2508C56.38 91.2508 59.38 81.2508 62.83 79.8908C65.43 78.8908 67.19 73.0508 67.19 73.0508C67.0895 77.274 67.4246 81.4963 68.19 85.6508C69.1 89.7108 75.07 99.8608 75.07 99.8608L67.38 92.0008C66.348 90.944 65.0313 90.2095 63.5899 89.8864C62.1485 89.5633 60.6444 89.6656 59.26 90.1808L56.38 91.2508Z" fill="white"/>
+              <path d="M93.75 91.2508C93.75 91.2508 90.7 81.2508 87.29 79.8908C84.69 78.8908 82.93 73.0508 82.93 73.0508C83.0273 77.2739 82.6922 81.4959 81.93 85.6508C81.01 89.7108 75.04 99.8608 75.04 99.8608L82.73 92.0008C83.7643 90.9442 85.0826 90.21 86.5255 89.887C87.9683 89.564 89.4739 89.666 90.86 90.1808L93.75 91.2508Z" fill="white"/>
+              <path d="M83.36 69.5615H76.36V68.5615H83.36C84.1349 68.5618 84.8907 68.3214 85.5231 67.8736C86.1555 67.4258 86.6331 66.7925 86.89 66.0615L88.14 62.5215L89.09 62.8615L87.81 66.3915C87.4848 67.3137 86.8828 68.113 86.0864 68.6803C85.29 69.2477 84.3378 69.5554 83.36 69.5615Z" fill="#6830C3"/>
+              <path d="M77.36 70.7703H79.01C79.4608 70.7703 79.8932 70.5912 80.212 70.2724C80.5308 69.9536 80.71 69.5212 80.71 69.0703H75.65C75.65 69.2944 75.6943 69.5163 75.7803 69.7232C75.8664 69.9301 75.9925 70.118 76.1514 70.276C76.3103 70.434 76.4989 70.559 76.7063 70.6438C76.9137 70.7286 77.1359 70.7716 77.36 70.7703Z" fill="#431CAD"/>
+              <path d="M79.01 67.3614H77.36C77.1351 67.36 76.9121 67.4034 76.704 67.4888C76.496 67.5743 76.3069 67.7002 76.1479 67.8593C75.9888 68.0183 75.8629 68.2073 75.7775 68.4154C75.692 68.6235 75.6487 68.8464 75.65 69.0713H80.71C80.7113 68.8473 80.6683 68.6251 80.5835 68.4177C80.4986 68.2103 80.3736 68.0217 80.2156 67.8628C80.0576 67.7039 79.8698 67.5778 79.6629 67.4917C79.456 67.4057 79.2341 67.3614 79.01 67.3614Z" fill="#6830C3"/>
+              <path d="M73.88 34.03C70.2845 34.0433 66.8412 35.4829 64.3062 38.0328C61.7713 40.5827 60.352 44.0345 60.36 47.63V49.92H62.36V47.63C62.3546 44.556 63.5686 41.6054 65.7357 39.4252C67.9028 37.245 70.846 36.0132 73.92 36H75.1V34L73.88 34.03Z" fill="#6830C3"/>
+              <path d="M76.24 34.0312H75.06V36.0312H76.24C79.3105 36.0418 82.2518 37.2683 84.4201 39.4423C86.5885 41.6163 87.8074 44.5607 87.81 47.6312V49.9212H89.81V47.6312C89.8126 45.847 89.4636 44.0798 88.783 42.4306C88.1023 40.7813 87.1033 39.2823 85.8431 38.0193C84.5829 36.7563 83.0861 35.754 81.4384 35.0697C79.7906 34.3854 78.0242 34.0326 76.24 34.0312Z" fill="#6830C3"/>
+              <path d="M92.98 50.161C92.2912 49.3759 91.3294 48.8825 90.29 48.781C89.7428 48.6355 89.1672 48.6355 88.62 48.781V63.621C89.1672 63.7664 89.7428 63.7664 90.29 63.621C91.3294 63.5194 92.2912 63.026 92.98 62.241C94 60.971 94 51.431 92.98 50.161Z" fill="#6830C3"/>
+              <path d="M86.58 51.7112V60.7112C86.5377 61.3505 86.7121 61.9853 87.075 62.5133C87.4379 63.0412 87.968 63.4316 88.58 63.6212V48.7812C87.9635 48.9701 87.4297 49.3631 87.0662 49.8956C86.7027 50.428 86.5312 51.0684 86.58 51.7112Z" fill="#6830C3"/>
+              <path d="M59.81 48.781C58.7679 48.883 57.8031 49.3761 57.11 50.161C56.11 51.431 56.11 60.971 57.11 62.241C57.8031 63.0259 58.7679 63.519 59.81 63.621C60.3572 63.7664 60.9328 63.7664 61.48 63.621V48.781C60.9328 48.6355 60.3572 48.6355 59.81 48.781Z" fill="#6830C3"/>
+              <path d="M61.51 48.7812V63.6212C62.1219 63.4316 62.6521 63.0412 63.015 62.5133C63.3778 61.9853 63.5522 61.3505 63.51 60.7112V51.7112C63.5569 51.0687 63.3847 50.4292 63.0215 49.8971C62.6582 49.365 62.1255 48.9717 61.51 48.7812Z" fill="#6830C3"/>
+              <path d="M144.903 30.2107C145.135 29.9295 145.614 29.9301 145.847 30.2107C146.056 30.452 145.982 30.7938 146.037 31.0845C146.215 32.4263 147.367 33.5576 148.712 33.7138C148.987 33.7595 149.308 33.7001 149.534 33.8988C149.815 34.1307 149.816 34.6101 149.534 34.8426C149.308 35.0407 148.987 34.982 148.711 35.027C147.367 35.182 146.215 36.3157 146.037 37.657C145.983 37.9476 146.055 38.2888 145.847 38.5301C145.614 38.8113 145.135 38.8113 144.903 38.5301C144.715 38.3188 144.76 38.0176 144.724 37.7576C144.604 36.5545 143.706 35.4838 142.55 35.1363C142.199 35.0095 141.822 35.0238 141.458 34.9676C141.234 34.9263 141.106 34.7232 141 34.542V34.2007C141.082 34.0726 141.154 33.9282 141.287 33.8451C141.443 33.7438 141.638 33.7507 141.816 33.7345C142.48 33.7007 143.129 33.4382 143.636 33.0088C144.283 32.4682 144.696 31.6545 144.739 30.812C144.753 30.6051 144.753 30.3726 144.903 30.2107ZM143.899 34.3707C144.489 34.7538 144.991 35.2588 145.375 35.8482C145.759 35.2576 146.263 34.7538 146.853 34.3707C146.263 33.987 145.759 33.4832 145.376 32.8932C144.991 33.4826 144.488 33.9857 143.899 34.3707Z" fill="white"/>
+              <path d="M119.678 26.1446C119.837 25.9516 120.166 25.952 120.325 26.1446C120.469 26.3101 120.418 26.5446 120.456 26.744C120.578 27.6647 121.369 28.4409 122.291 28.5481C122.48 28.5794 122.7 28.5386 122.855 28.675C123.048 28.8341 123.048 29.163 122.855 29.3225C122.7 29.4584 122.48 29.4181 122.291 29.449C121.368 29.5553 120.578 30.3332 120.456 31.2534C120.418 31.4528 120.468 31.687 120.325 31.8525C120.166 32.0455 119.837 32.0455 119.678 31.8525C119.549 31.7075 119.58 31.5009 119.555 31.3225C119.473 30.497 118.856 29.7625 118.063 29.524C117.822 29.437 117.564 29.4468 117.314 29.4083C117.161 29.38 117.072 29.2406 117 29.1162V28.8821C117.056 28.7942 117.105 28.6951 117.197 28.6381C117.304 28.5686 117.437 28.5734 117.56 28.5622C118.015 28.5391 118.461 28.359 118.809 28.0644C119.253 27.6934 119.536 27.1351 119.565 26.5571C119.575 26.4151 119.575 26.2556 119.678 26.1446ZM118.989 28.9987C119.394 29.2616 119.738 29.6081 120.002 30.0125C120.265 29.6072 120.611 29.2616 121.016 28.9987C120.611 28.7354 120.265 28.3898 120.002 27.985C119.738 28.3894 119.393 28.7346 118.989 28.9987Z" fill="white"/>
+              <path d="M11.4025 35.2098C11.645 34.9167 12.1525 34.9329 12.3725 35.2448C12.55 35.4785 12.4838 35.7879 12.5138 36.0598C12.5838 38.1629 13.325 40.2317 14.575 41.921C15.755 43.5198 17.3894 44.781 19.24 45.5067C20.4538 45.9929 21.76 46.2229 23.065 46.2454C23.3957 46.2185 23.7219 46.4723 23.7432 46.8104C23.7888 47.1623 23.4838 47.501 23.1282 47.4917C21.2557 47.4954 19.3819 47.9942 17.7663 48.9448C17.5282 49.1048 17.1832 49.1023 16.9719 48.8979C16.6688 48.6467 16.7075 48.1192 17.0488 47.9204C17.735 47.506 18.4682 47.1667 19.2269 46.9079C19.2269 46.8892 19.2275 46.8517 19.2275 46.8329C15.8594 45.6854 13.0907 42.926 11.9257 39.5648C11.9019 39.4448 11.8063 39.5354 11.8038 39.6098C10.6432 42.921 7.92505 45.6404 4.6138 46.8017C4.5388 46.8142 4.44255 46.8917 4.56942 46.921C7.9513 48.101 10.7482 50.8973 11.8563 54.311C11.9525 54.1917 11.9682 54.0329 12.0257 53.8954C12.2607 53.2829 12.5444 52.6892 12.875 52.1223C12.9825 51.9167 13.1957 51.7517 13.4363 51.7623C13.7625 51.7504 14.0657 52.0429 14.0619 52.3704C14.0782 52.5417 13.9869 52.6929 13.9063 52.836C12.9825 54.4342 12.4982 56.2804 12.495 58.1254C12.5025 58.4579 12.2063 58.7529 11.8738 58.7423C11.5644 58.751 11.2757 58.4954 11.2569 58.1848C11.22 57.5154 11.2119 56.8398 11.0669 56.1823C10.6813 54.0554 9.61317 52.061 8.06817 50.5504C6.57755 49.0717 4.63505 48.0598 2.5713 47.6754C1.89192 47.5298 1.19505 47.526 0.505049 47.4798C0.101299 47.4242 -0.128701 46.9204 0.0762993 46.5729C0.196299 46.3235 0.486924 46.2273 0.747549 46.2429C2.01567 46.2217 3.2813 45.9898 4.46317 45.5248C6.52942 44.7267 8.3288 43.2592 9.53192 41.3992C10.5657 39.8167 11.1694 37.9504 11.2332 36.0592C11.2619 35.7748 11.195 35.4429 11.4025 35.2098Z" fill="white"/>
+              <path d="M24.2695 41.7748C24.6939 41.6367 25.1514 42.0561 25.0483 42.4911C24.9858 42.9523 24.3633 43.1592 24.0264 42.8461C23.657 42.5492 23.8014 41.8786 24.2695 41.7748Z" fill="white"/>
+              <path d="M46.6207 49.169C46.8058 48.9434 47.1904 48.9439 47.376 49.169C47.482 49.283 47.497 49.4456 47.501 49.5946C47.5215 50.5745 47.9196 51.5408 48.5984 52.248C49.3066 52.9998 50.3154 53.4609 51.3493 53.4924C51.4918 53.5004 51.6464 53.4964 51.7709 53.578C51.877 53.644 51.934 53.7595 52 53.8615V54.1336C51.9345 54.2357 51.877 54.3517 51.7704 54.4182C51.6459 54.4998 51.4913 54.4953 51.3488 54.5028C50.3039 54.5358 49.2831 55.0059 48.5739 55.7737C47.9096 56.4784 47.521 57.4332 47.501 58.4016C47.4985 58.5616 47.476 58.7382 47.352 58.8532C47.1584 59.0533 46.7988 59.0418 46.6207 58.8272C46.4882 58.6836 46.4997 58.4776 46.4907 58.2965C46.4407 57.1381 45.8495 56.0198 44.9247 55.3215C44.2619 54.8089 43.4317 54.5198 42.5949 54.5008C42.4343 54.4988 42.2583 54.4753 42.1432 54.3517C41.9427 54.1581 41.9542 53.7985 42.1687 53.6205C42.2978 53.5004 42.4823 53.4984 42.6479 53.4924C43.6807 53.4604 44.6906 53.0013 45.3983 52.248C46.0275 51.5898 46.4176 50.71 46.4862 49.8022C46.5052 49.5891 46.4652 49.3416 46.6207 49.169ZM46.7212 52.169C46.3141 52.8122 45.7574 53.3604 45.1087 53.759C44.9762 53.839 44.8371 53.9091 44.7096 53.9976C45.2258 54.2927 45.7269 54.6253 46.1301 55.0674C46.4842 55.4246 46.7443 55.8572 46.9983 56.2874C47.1284 56.0868 47.2354 55.8722 47.374 55.6772C47.8586 54.9594 48.5414 54.3877 49.3116 53.9981C48.7984 53.732 48.3163 53.3999 47.9161 52.9803C47.54 52.6101 47.2614 52.16 46.9983 51.7073C46.8963 51.8554 46.8183 52.0179 46.7212 52.169Z" fill="white"/>
+              <path d="M74.774 14.2112C75.0052 13.9293 75.4859 13.9299 75.7177 14.2112C75.8502 14.3537 75.869 14.5568 75.874 14.743C75.8996 15.9674 76.3971 17.1749 77.2452 18.0587C78.1302 18.998 79.3909 19.5743 80.6827 19.6137C80.8609 19.6237 81.054 19.6187 81.2096 19.7205C81.3421 19.803 81.4134 19.9474 81.4959 20.0749V20.4149C81.414 20.5424 81.3421 20.6874 81.209 20.7705C81.0534 20.8724 80.8602 20.8668 80.6821 20.8762C79.3765 20.9174 78.1009 21.5049 77.2146 22.4643C76.3846 23.3449 75.899 24.538 75.874 25.748C75.8709 25.948 75.8427 26.1687 75.6877 26.3124C75.4459 26.5624 74.9965 26.548 74.774 26.2799C74.6084 26.1005 74.6227 25.843 74.6115 25.6168C74.549 24.1693 73.8102 22.7718 72.6546 21.8993C71.8265 21.2587 70.789 20.8974 69.7434 20.8737C69.5427 20.8712 69.3227 20.8418 69.179 20.6874C68.9284 20.4455 68.9427 19.9962 69.2109 19.7737C69.3721 19.6237 69.6027 19.6212 69.8096 19.6137C71.1002 19.5737 72.3621 18.9999 73.2465 18.0587C74.0327 17.2362 74.5202 16.1368 74.6059 15.0024C74.6296 14.7362 74.5796 14.4268 74.774 14.2112ZM74.8996 17.9599C74.3909 18.7637 73.6952 19.4487 72.8846 19.9468C72.719 20.0468 72.5452 20.1343 72.3859 20.2449C73.0309 20.6137 73.6571 21.0293 74.1609 21.5818C74.6034 22.028 74.9284 22.5687 75.2459 23.1062C75.4084 22.8555 75.5421 22.5874 75.7152 22.3437C76.3209 21.4468 77.174 20.7324 78.1365 20.2455C77.4952 19.913 76.8927 19.498 76.3927 18.9737C75.9227 18.5112 75.5746 17.9487 75.2459 17.383C75.1184 17.568 75.0209 17.7712 74.8996 17.9599Z" fill="white"/>
+              <path d="M135.903 4.2107C136.135 3.92945 136.614 3.93008 136.847 4.2107C137.056 4.45195 136.982 4.79383 137.037 5.08445C137.215 6.42633 138.367 7.55758 139.712 7.71383C139.987 7.75945 140.308 7.70008 140.534 7.89883C140.815 8.1307 140.816 8.61008 140.534 8.84258C140.308 9.0407 139.987 8.98195 139.711 9.02695C138.367 9.18195 137.215 10.3157 137.037 11.657C136.982 11.9476 137.055 12.2888 136.847 12.5301C136.614 12.8113 136.135 12.8113 135.903 12.5301C135.715 12.3188 135.76 12.0176 135.724 11.7576C135.604 10.5545 134.706 9.48383 133.55 9.13633C133.199 9.00945 132.822 9.02383 132.458 8.96758C132.234 8.92633 132.106 8.7232 132 8.54195V8.2007C132.082 8.07258 132.154 7.9282 132.287 7.84508C132.443 7.74383 132.638 7.7507 132.816 7.73445C133.48 7.7007 134.129 7.4382 134.636 7.00883C135.283 6.4682 135.696 5.65445 135.739 4.81195C135.753 4.60508 135.752 4.37258 135.903 4.2107ZM134.899 8.3707C135.489 8.75383 135.991 9.25883 136.375 9.8482C136.759 9.25758 137.262 8.75383 137.853 8.3707C137.263 7.98695 136.759 7.4832 136.376 6.8932C135.991 7.48258 135.487 7.9857 134.899 8.3707Z" fill="white"/>
+              <circle cx="128" cy="39" r="3.25" stroke="white" stroke-width="1.5"/>
+              <circle cx="18" cy="4" r="3.25" stroke="white" stroke-width="1.5"/>
+              <circle cx="121" cy="55" r="1.25" stroke="white" stroke-width="1.5"/>
+              <circle cx="32" cy="24" r="1.25" stroke="white" stroke-width="1.5"/>
+            </svg>
+            <div class="shape">
+              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="52" viewBox="0 0 60 52" fill="none">
+                <path d="M0 26L15 0.0192375H45L60 26L45 51.9808H15L0 26Z" fill="#9770D6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="content">
+            <div class="header_caption">
+              <h3>دریافت مشاوره‌ی رژیم</h3>
+              <p>
+                برای <span class="bold-text">دریافت مشاوره رایگان</span> شمارت رو ثبت و یکی از روش‌های زیر رو انتخاب کن
+              </p>
+            </div>
+            <div class="form_content">
+              <form @submit.prevent="register(2,'form2')" v-if="submitStatus!=='success'">
+                <c-input
+                        v-model="form.phone"
+                        ref="tel-2"
+                        label="شماره موبایل"
+                        type="tel"
+                        numeric
+                        required
+                        max="11"
+                        style="margin-bottom: 15px"
+                ></c-input>
+                <p v-if="invalidTel" class="small text-center">لطفا شماره موبایل را بصورت صحیح وارد کنید</p>
+                <div class="adviceType">
+                  <input type="radio" name="adviceType" id="adviceType_whatsapp" v-model="form.adviceType" value="whatsapp">
+                  <label for="adviceType_whatsapp">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4.25895 16.5939C3.14076 14.7089 2.74916 12.4805 3.15768 10.3272C3.56621 8.1739 4.74675 6.2438 6.47764 4.89933C8.20852 3.55486 10.3707 2.8885 12.5581 3.02539C14.7455 3.16227 16.8078 4.09298 18.3575 5.64274C19.9073 7.19251 20.838 9.25472 20.9749 11.4421C21.1118 13.6296 20.4455 15.7917 19.101 17.5226C17.7565 19.2535 15.8264 20.4341 13.6732 20.8426C11.5199 21.2511 9.29149 20.8596 7.40649 19.7414L7.40651 19.7413L4.29808 20.6294C4.16948 20.6662 4.03338 20.6678 3.90391 20.6343C3.77443 20.6007 3.65628 20.5332 3.56171 20.4386C3.46713 20.344 3.39956 20.2259 3.36601 20.0964C3.33246 19.9669 3.33415 19.8308 3.37089 19.7022L4.25902 16.5938L4.25895 16.5939Z" stroke="#B0B0B0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M14.2607 17.25C13.274 17.2514 12.2967 17.0581 11.3848 16.6811C10.4729 16.3042 9.64441 15.751 8.9467 15.0533C8.24899 14.3556 7.69582 13.5271 7.31887 12.6152C6.94192 11.7033 6.74861 10.726 6.75001 9.73934C6.75224 9.04482 7.02986 8.37953 7.52196 7.88943C8.01406 7.39932 8.68047 7.12441 9.375 7.125V7.125C9.48892 7.125 9.60081 7.15512 9.69934 7.21229C9.79787 7.26947 9.87953 7.35168 9.93605 7.45059L11.0321 9.36865C11.0982 9.48432 11.1323 9.61551 11.1309 9.74873C11.1294 9.88195 11.0926 10.0124 11.024 10.1266L10.1438 11.5937C10.5967 12.5986 11.4014 13.4033 12.4063 13.8562V13.8562L13.8734 12.976C13.9876 12.9074 14.118 12.8706 14.2513 12.8691C14.3845 12.8677 14.5157 12.9018 14.6313 12.9679L16.5494 14.064C16.6483 14.1205 16.7305 14.2021 16.7877 14.3007C16.8449 14.3992 16.875 14.5111 16.875 14.625V14.625C16.873 15.3187 16.5973 15.9837 16.1077 16.4752C15.6182 16.9667 14.9544 17.2452 14.2607 17.25V17.25Z" stroke="#B0B0B0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    مشاوره واتساپ
+                  </label>
+                  <input type="radio" name="adviceType" id="adviceType_call" v-model="form.adviceType" value="call">
+                  <label for="adviceType_call" class="">
+                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5.66965 9.70238C6.44762 11.2929 7.73687 12.5763 9.3309 13.347C9.44753 13.4023 9.57654 13.4262 9.70523 13.4165C9.83392 13.4067 9.95786 13.3636 10.0648 13.2915L12.4119 11.7264C12.5157 11.6572 12.6352 11.6149 12.7594 11.6035C12.8837 11.5921 13.0088 11.6119 13.1235 11.661L17.5144 13.5428C17.6636 13.6062 17.7881 13.7163 17.8693 13.8566C17.9504 13.9969 17.9838 14.1598 17.9643 14.3207C17.8255 15.4067 17.2956 16.4049 16.4739 17.1283C15.6521 17.8518 14.5948 18.2509 13.5 18.2509C10.1185 18.2509 6.87548 16.9076 4.48439 14.5166C2.0933 12.1255 0.75 8.88246 0.75 5.50095C0.750058 4.40611 1.14918 3.34883 1.87264 2.52708C2.5961 1.70533 3.59428 1.17545 4.68028 1.03667C4.84117 1.0172 5.00403 1.05054 5.14432 1.13167C5.28461 1.21281 5.39473 1.33734 5.4581 1.4865L7.34158 5.8813C7.3903 5.99497 7.41015 6.11893 7.39936 6.24214C7.38858 6.36534 7.3475 6.48397 7.27977 6.58745L5.72011 8.97055C5.64912 9.07775 5.60716 9.20154 5.59831 9.32981C5.58947 9.45808 5.61405 9.58645 5.66965 9.70238V9.70238Z" stroke="#B0B0B0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    مشاوره تلفنی
+                  </label>
+                </div>
+                <button type="submit" class="btn-gettingAdvice form2-s">ثبت
+                  <i v-if="loading" class="spinner-border spinner-border-sm"></i>
+                </button>
+              </form>
+              <p :class="[submitStatus=='error'? 'error':'success text-center m-0']">{{ response.msg }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="container mb-30">
+        <header class="header-title">
+          <h2>تیم متخصصین تغذیه</h2>
+        </header>
+        <div id="customers-testimonials">
+          <div class="owl-carousel ">
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/borhani.png" alt="">
+                <p>مروارید برهانی</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 5688</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/abdollah.png" alt="">
+                <p>آزاده عبدالله زاده</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 1193</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/taheri.png" alt="">
+                <p>نگین طاهری</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 9018</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/romoozi.png" alt="">
+                <p>ندا رموزی</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 6340</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/zonobi.png" alt="">
+                <p>فرزانه ذنوبی</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 9630</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/tabakh.png" alt="">
+                <p>آناهیتا طباخ</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 9016</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/esfandiyari.png" alt="">
+                <p>الهام اسفندیاری</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 8758</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/sadeghian.png" alt="">
+                <p>ریحانه صادقیان</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 8815</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/mortazavi.png" alt="">
+                <p>گلنوش مرتضوی</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 9184</p>
+              </div>
+            </div>
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/zamani.png" alt="">
+                <p>مه لقا زمانی</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 9027</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/qanbari.png" alt="">
+                <p>فاطمه قنبری</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 8913</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+
+            <!--TESTIMONIAL 1 -->
+            <div class="item">
+              <div class="shadow-effect">
+                <img class="img-circle" src="assets/images/team/tabatabaei.png" alt="">
+                <p>دیبا طباطبایی</p>
+                <p class="subtitle">کارشناس تغذیه</p>
+                <p class="subtitle">کد نظام پزشکی: 4825</p>
+              </div>
+            </div>
+            <!--END OF TESTIMONIAL 1 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-button cta-active">
+        <button class="btn-landing scroll-to m-0">ثبت نام و دریافت رژیم</button>
+      </section>
+
+
+      <!--    فوتر   -->
+      <footer>
+        <div id="footer">
+          <div id="logo_f" style="padding: 20px 0 10px 0;">
+            <a><img src="assets/images/logo.png" class="img-responsive"></a>
+            <div id="box_text_f" style="margin-top: 10px;">
+              <h3 style="margin-bottom: 5px">برنافیت دکتر کرمانی</h3>
+              <p style="margin-bottom: 5px; font-size: 15px;">تهران، خیابان شریعتی، کوچه داد</p>
+              <a class="click-tel" href="tel:02191016633" style="margin-bottom: 5px; font-size: 18px;">۹۱۰۱۶۶۳۳ - ۰۲۱</a>
+              <p style="margin-bottom: 5px">
+                <a>www.bornafit.ir</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <!--        <div class="fixed-contact-button" v-if="this.userInfo.utm_source!=='chavosh'">-->
+      <!--            <a href="tel:02191016633" class="elegant-icon icon_phone kt-modal-button"></a>-->
+      <!--            <div class="tooltip-sticky">مشاوره تلفنی</div>-->
+      <!--        </div>-->
+
+    </div>
+  </div>
+{% endblock %}

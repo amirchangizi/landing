@@ -1,0 +1,47 @@
+@font-face {
+    font-family: "kermany-icons";
+    src: url("./kermany-icons.eot?4d8ccf4b5ff393000751736f86f5d907?#iefix") format("embedded-opentype"),
+url("./kermany-icons.woff2?4d8ccf4b5ff393000751736f86f5d907") format("woff2"),
+url("./kermany-icons.woff?4d8ccf4b5ff393000751736f86f5d907") format("woff"),
+url("./kermany-icons.ttf?4d8ccf4b5ff393000751736f86f5d907") format("truetype"),
+url("./kermany-icons.svg?4d8ccf4b5ff393000751736f86f5d907#kermany-icons") format("svg");
+}
+
+*[class^="ic-"]:before, *[class*=" ic-"]:before {
+    font-family: kermany-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.ic-call:before {
+    content: "\f101";
+}
+.ic-comma:before {
+    content: "\f102";
+}
+.ic-emoji:before {
+    content: "\f103";
+}
+.ic-emoji2:before {
+    content: "\f104";
+}
+.ic-logo:before {
+    content: "\f105";
+}
+.ic-mobile:before {
+    content: "\f106";
+}
+.ic-nArrow:before {
+    content: "\f107";
+}
+.ic-pArrow:before {
+    content: "\f108";
+}
+.ic-reload:before {
+    content: "\f109";
+}

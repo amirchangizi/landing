@@ -1,0 +1,9 @@
+{
+  "name": "Landing",
+  "author": "Amir",
+  "authorUrl": "",
+  "builder": ["legacy", "grapesjsbuilder"],
+  "features": [
+    "page"
+  ]
+}

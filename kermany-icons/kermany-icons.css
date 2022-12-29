@@ -1,0 +1,47 @@
+@font-face {
+    font-family: "kermany-icons";
+    src: url("./kermany-icons.eot?463b00d080781bd3999ca8e1c479b0c4?#iefix") format("embedded-opentype"),
+url("./kermany-icons.woff2?463b00d080781bd3999ca8e1c479b0c4") format("woff2"),
+url("./kermany-icons.woff?463b00d080781bd3999ca8e1c479b0c4") format("woff"),
+url("./kermany-icons.ttf?463b00d080781bd3999ca8e1c479b0c4") format("truetype"),
+url("./kermany-icons.svg?463b00d080781bd3999ca8e1c479b0c4#kermany-icons") format("svg");
+}
+
+*[class^="ic-"]:before, *[class*=" ic-"]:before {
+    font-family: kermany-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.ic-analyze:before {
+    content: "\f101";
+}
+.ic-arrow-right:before {
+    content: "\f102";
+}
+.ic-Coach:before {
+    content: "\f103";
+}
+.ic-pass:before {
+    content: "\f104";
+}
+.ic-play:before {
+    content: "\f105";
+}
+.ic-scale:before {
+    content: "\f106";
+}
+.ic-special:before {
+    content: "\f107";
+}
+.ic-tick:before {
+    content: "\f108";
+}
+.ic-video:before {
+    content: "\f109";
+}
